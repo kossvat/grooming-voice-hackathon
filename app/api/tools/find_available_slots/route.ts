@@ -5,6 +5,8 @@
 
 import { NextRequest } from "next/server";
 import { z } from "zod";
+import { formatInTimeZone } from "date-fns-tz";
+import { STUDIO_TIMEZONE } from "@/lib/domain/time";
 import { isValidCalendarDate, isValidTimeOfDay } from "@/lib/server/dates";
 import { error, json } from "@/lib/server/http";
 import { findAvailableSlots, rpcHttpError } from "@/lib/server/rpc";
@@ -85,7 +87,12 @@ export async function POST(req: NextRequest): Promise<Response> {
 
     return json(200, {
       result: {
-        slots: result.slots,
+        timezone: STUDIO_TIMEZONE,
+        slots: result.slots.map((slot) => ({
+          ...slot,
+          startsAtLocal: formatInTimeZone(slot.startsAt, STUDIO_TIMEZONE, "yyyy-MM-dd'T'HH:mm:ssXXX"),
+          spokenStart: formatInTimeZone(slot.startsAt, STUDIO_TIMEZONE, "EEEE, MMMM d, yyyy 'at' h:mm a zzz"),
+        })),
         generation: result.generation,
         ...(result.reason ? { reason: result.reason } : {}),
       },

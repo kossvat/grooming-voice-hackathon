@@ -4,10 +4,10 @@ A hackathon prototype for one fictional grooming studio. An ElevenLabs voice rec
 
 ## Demo and current status
 
-- [Preview voice demo](https://grooming-voice-hackathon-mqkgg74rl-kossvats-projects.vercel.app/demo)
-- [Preview studio CRM](https://grooming-voice-hackathon-mqkgg74rl-kossvats-projects.vercel.app/studio)
+- [Preview voice demo](https://grooming-voice-hackathon-oxzpt6q33-kossvats-projects.vercel.app/demo)
+- [Preview studio CRM](https://grooming-voice-hackathon-oxzpt6q33-kossvats-projects.vercel.app/studio)
 
-The preview is deployed and the four ElevenLabs tools are configured. Local and remote HTTP booking paths, retry idempotency and authenticated CRM responses passed. On September 19, 2026 at 17:46 ET, Codex independently validated 63 passing tests, TypeScript checks and the production build. The rollback-only SQL suite passed 12 sequential checks. A Node.js WebSocket probe confirmed that the provider conversation ID matched the prebound database session and received the provider's greeting audio.
+The preview is deployed and all four ElevenLabs tools point to this deployment. Local and remote HTTP booking paths, retry idempotency and authenticated CRM responses passed. On September 19, 2026 at 17:53 ET, Codex independently validated 63 passing tests, TypeScript checks and the production build. The rollback-only SQL suite passed 12 sequential checks. Summer and winter timezone-formatting probes passed; availability and booking responses include the studio timezone, local timestamp and computed spoken start time, which the agent prompt instructs it to use. A Node.js WebSocket probe confirmed that the provider conversation ID matched the prebound database session and received the provider's greeting audio.
 
 End-to-end microphone conversation, provider-origin tool calls, audible typing/interruption behavior and browser CRM sign-in/reload have not yet been fully validated. Vercel protection may require the owner to sign in. This is a synthetic demo, not a production salon deployment or BarkReply integration.
 
@@ -53,4 +53,4 @@ npm run build
 
 ## Development provenance
 
-The initial application was implemented using Mel. At the owner's request, Codex replaced the final browser transport with an ElevenLabs signed WebSocket URL to avoid a blocked LiveKit connection. The server still binds each session to the provider-issued conversation ID before the browser connects. Codex also coordinated validation, database setup and this source export. This repository does not claim that all development was performed exclusively in Mel.
+The initial application was implemented using Mel. At the owner's request, Codex replaced the final browser transport with an ElevenLabs signed WebSocket URL to avoid a blocked LiveKit connection. The server still binds each session to the provider-issued conversation ID before the browser connects. Codex also added explicit studio-local time fields to prevent UTC timestamps being spoken as local times, and coordinated validation, database setup and this source export. This repository does not claim that all development was performed exclusively in Mel.

@@ -9,6 +9,8 @@
 
 import { NextRequest } from "next/server";
 import { z } from "zod";
+import { formatInTimeZone } from "date-fns-tz";
+import { STUDIO_TIMEZONE } from "@/lib/domain/time";
 import { error, json } from "@/lib/server/http";
 import { createBooking, rpcHttpError } from "@/lib/server/rpc";
 import { serviceAvailable } from "@/lib/server/supabase";
@@ -78,6 +80,9 @@ export async function POST(req: NextRequest): Promise<Response> {
       result: {
         status: "confirmed",
         ...booking,
+        timezone: STUDIO_TIMEZONE,
+        startsAtLocal: formatInTimeZone(booking.startsAt, STUDIO_TIMEZONE, "yyyy-MM-dd'T'HH:mm:ssXXX"),
+        spokenStart: formatInTimeZone(booking.startsAt, STUDIO_TIMEZONE, "EEEE, MMMM d, yyyy 'at' h:mm a zzz"),
       },
     });
   } catch (e) {
