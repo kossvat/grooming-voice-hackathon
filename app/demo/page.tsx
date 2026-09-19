@@ -85,7 +85,7 @@ export default function DemoPage() {
       }
 
       const {
-        conversationToken,
+        signedUrl,
         sessionId: newSessionId,
         sessionCapability: newCapability,
       } = await response.json();
@@ -98,11 +98,8 @@ export default function DemoPage() {
       // startSession is fire-and-forget (returns void); success/failure arrive
       // via onConnect/onError. We do not await it as proof of connection.
       startSession({
-        conversationToken,
-        // Use LiveKit's established /rtc signalling path. The SDK's newer
-        // single-peer default sends a v1 JoinRequest during connection setup;
-        // that handshake fails before the provider starts this demo's call.
-        webRtc: { singlePeerConnection: false },
+        signedUrl,
+        connectionType: "websocket",
         dynamicVariables: {
           secret__session_capability: newCapability,
         },

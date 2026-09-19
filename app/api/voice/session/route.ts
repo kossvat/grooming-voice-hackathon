@@ -1,17 +1,17 @@
 // POST /api/voice/session
-// Creates a voice session: mints an ElevenLabs WebRTC token, prebinds the
+// Creates a voice session: mints an ElevenLabs single-use signed URL, prebinds the
 // provider conversation_id on our conversation row, and returns the session
 // capability for the browser page (kept in memory only).
 //
 // Contract (system-design.md §15):
 //   request  { demoCode }
-//   response { conversationToken, conversationId, sessionId, sessionCapability }
+//   response { signedUrl, conversationId, sessionId, sessionCapability }
 
 import { NextRequest } from "next/server";
 import { z } from "zod";
 import { checkDemoCode } from "@/lib/server/demo-gate";
 import { generateSessionCapability, hashSessionCapability } from "@/lib/server/crypto";
-import { fetchConversationToken } from "@/lib/server/elevenlabs";
+import { fetchSignedConversation } from "@/lib/server/elevenlabs";
 import { requireEnv, studioId } from "@/lib/server/env";
 import { error, json } from "@/lib/server/http";
 import { createConversation } from "@/lib/server/rpc";
@@ -39,9 +39,9 @@ export async function POST(req: NextRequest): Promise<Response> {
   }
 
   // Studio must be accepting new sessions (double-checked inside RPC too).
-  let token: Awaited<ReturnType<typeof fetchConversationToken>>;
+  let token: Awaited<ReturnType<typeof fetchSignedConversation>>;
   try {
-    token = await fetchConversationToken(requireEnv("ELEVENLABS_AGENT_ID"), requireEnv("ELEVENLABS_API_KEY"));
+    token = await fetchSignedConversation(requireEnv("ELEVENLABS_AGENT_ID"), requireEnv("ELEVENLABS_API_KEY"));
   } catch (e) {
     return error(502, "elevenlabs_unavailable", e instanceof Error ? e.message : undefined);
   }
@@ -61,7 +61,7 @@ export async function POST(req: NextRequest): Promise<Response> {
   }
 
   return json(200, {
-    conversationToken: token.token,
+    signedUrl: token.signedUrl,
     conversationId: token.conversationId,
     sessionId: conversation.id,
     sessionCapability: capability,
