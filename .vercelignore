@@ -1,0 +1,19 @@
+# Vercel: exclude local-only files from the deployment bundle.
+# Secrets must never ship; DB migrations run via authenticated MCP, not deploy.
+
+.env
+.env.*
+.env*.local
+!.env.example
+
+.git
+.gitignore
+.gitattributes
+
+.harness
+
+db
+
+node_modules
+
+.next
